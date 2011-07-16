@@ -41,6 +41,7 @@ gem "hoptoad_notifier", '2.4.8'
 gem "feedzirra", "~> 0.0.24"
 gem "meta_search", "~> 1.0.5"
 gem "meta_where", "~> 1.0.4"
+gem "ancestry", "~> 1.2.4"
 
 group :cucumber, :test, :development do
   gem 'capybara'
