@@ -91,7 +91,7 @@ class SupplyItem < ActiveRecord::Base
     # attributes
     has created_at, updated_at
     has supplier_id
-    has category_id
+    has category(:ancestry), :as => :category_ids, :type => :multi
 
     set_property :delta => true
 

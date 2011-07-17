@@ -5,8 +5,9 @@ class Category < ActiveRecord::Base
   
   #acts_as_tree :order => "name"
   
-  acts_as_nested_set :order => "name"
-
+#  acts_as_nested_set :order => "name"
+  has_ancestry
+  
   after_save :expire_cache_fragments
   after_destroy :expire_cache_fragments
 

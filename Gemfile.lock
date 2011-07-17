@@ -28,8 +28,6 @@ GEM
       activemodel (= 3.0.3)
       activesupport (= 3.0.3)
     activesupport (3.0.3)
-    ancestry (1.2.4)
-      activerecord (>= 2.2.2)
     arel (2.0.10)
     bcrypt-ruby (2.1.4)
     builder (2.1.2)
@@ -115,7 +113,7 @@ GEM
     mime-types (1.16)
     mini_magick (3.2)
       subexec (~> 0.0.4)
-    mysql2 (0.2.7)
+    mysql (2.8.1)
     nokogiri (1.4.4)
     orm_adapter (0.0.5)
     paperclip (2.3.8)
@@ -197,7 +195,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  ancestry (~> 1.2.4)
   capybara
   carrierwave
   ckeditor (= 3.4.2.pre)
@@ -215,7 +212,7 @@ DEPENDENCIES
   meta_search (~> 1.0.5)
   meta_where (~> 1.0.4)
   mini_magick
-  mysql2 (< 3.0.0)
+  mysql
   paperclip
   rack-ssl-enforcer
   rails (= 3.0.3)

@@ -4,14 +4,23 @@ class Admin::SupplyItemsController < Admin::BaseController
     @supplier = Supplier.find(params[:supplier_id])
     @root_category = @supplier.category
     cache_manufacturers_for_supplier(@supplier)
-    @search = @supplier.supply_items.metasearch(params[:search])
-    if params[:category_id] and !params[:category_id].blank?
-      category = Category.find(params[:category_id])
-      result = @search.where(:category_id => category.children_categories.collect(&:id))
-    else
-      result = @search
-    end
-    @supply_items = result.paginate :per_page => SupplyItem.per_page, :page => params[:page]
+      keyword = nil
+	 	
+    keyword = params[:search][:keyword] unless params[:search].blank? or params[:search][:keyword].blank?
+    conditions = {}
+    with = {}
+    with_all = {}
+    conditions[:manufacturer] = params[:manufacturer] unless params[:manufacturer].blank?
+    with.merge!(:category_id => params[:category_id]) unless params[:category_id].blank?
+    with_all.merge!(:category_ids => [params[:category_id]]) unless params[:category_id].blank?
+    
+    @supply_items = @supplier.supply_items.sphinx_available_items.search(keyword,
+                                                  :conditions => conditions,
+#                                                  :with => with,
+                                                  :with_all => with_all,
+                                                  :per_page => SupplyItem.per_page,
+                                                  :page => params[:page],
+                                                  :max_matches => 100000)
   end
   
   def update

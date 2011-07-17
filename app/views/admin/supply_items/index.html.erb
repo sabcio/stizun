@@ -1,30 +1,20 @@
 <h2>Supply items for <%= @supplier.name %></h2>
 
 
-<%= form_for [:admin, @supplier, @search] do |f| %>
-  <p>Search for: </p>
-  <%= f.text_field :keyword, :size => 25 %>
-  <%= f.submit 'Search' %>
-
-  <% manufacturer_contains = nil %>
-  <% search_keyword = nil %>
-
-  <% unless params[:search].blank? %>
-    <% manufacturer_contains = params[:search][:manufacturer_contains] unless params[:search][:manufacturer_contains].blank? %>
-    <% search_keyword = params[:search][:keyword] unless params[:search][:keyword].blank? %>
-  <% end %>
+<%= form_tag({:action => 'index'}, {:method => 'get'}) do %>
+  <p>Search for: <%= text_field :search, :keyword, :size => 25 %> <%= submit_tag 'Search' %></p>
 
   <p>Limit to Manufacturer:</p>
 
-  <%= f.select :manufacturer_contains,
+  <%= select_tag :manufacturer,
       options_for_select([""] + @manufacturers_array,
-      manufacturer_contains)  %>
+      params[:manufacturer]) %>
 
   <p>Limit to Category:</p>
 
-  <%= category_id_select_tag_for_supplier(@supplier, params[:category_id]) %>
-
-  <%= f.submit 'Search' %>
+  <%= select_tag :category_id,
+        options_from_collection_for_select(@root_category.children_categories.flatten.map, :id, :fully_qualified_name, params[:category_id]),
+        {:include_blank => true} if @root_category%>
       
 <% end %>
 
@@ -44,25 +34,26 @@
   </tr>
 
 <% @supply_items.each do |item| %>
-  <tr class="<%= cycle('odd','even') %>" id="supply_item_<%= item.id %>">
-    <td><%= item.id %></td>
-    <td class="workflow_<%= item.workflow_status_constant %>"><%= item.workflow_status_to_human %></td>
-    <td><%= item.manufacturer %></td>
-    <td><%= item.supplier_product_code %> / <%=h item.manufacturer_product_code %></td>
-    <td><%= item.name %></td>
-    <td><%= item.status_human %></td>
-    <td class="price"><%= item.purchase_price %></td>
-    <td>
-      <%= link_to 'Create Product', new_from_supply_item_admin_products_path(:supply_item_id => item), :class => 'fancybox' %>
-      <%= link_to 'Edit Product', edit_admin_product_path(item.product), :class => 'fancybox' unless item.product.nil? %>
-    </td>
-  </tr>
-  <tr class="form">
-    <td colspan="7"><%= render 'form', :item => item %></td> 
-  </tr>
-  
-  <%= render :partial => 'product_alternatives', :locals => {:item => item} %>
-
+  <% cache( item) do %>
+    <tr class="<%= cycle('odd','even') %>" id="supply_item_<%= item.id %>">
+      <td><%= item.id %></td>
+      <td class="workflow_<%= item.workflow_status_constant %>"><%= item.workflow_status_to_human %></td>
+      <td><%= item.manufacturer %></td>
+      <td><%= item.supplier_product_code %> / <%=h item.manufacturer_product_code %></td>
+      <td><%= item.name %></td>
+      <td><%= item.status_human %></td>
+      <td class="price"><%= item.purchase_price %></td>
+      <td>
+        <%= link_to 'Create Product', new_from_supply_item_admin_products_path(:supply_item_id => item), :class => 'fancybox' %>
+        <%= link_to 'Edit Product', edit_admin_product_path(item.product), :class => 'fancybox' unless item.product.nil? %>
+      </td>
+    </tr>
+    <tr class="form">
+      <td colspan="7"><%= render 'form', :item => item %></td> 
+    </tr>
+    
+    <%= render :partial => 'product_alternatives', :locals => {:item => item} %>
+  <% end %> 
 <% end %>
 </table>
 
